@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 pub enum AsyncSincInterpolation {
     Nearest,
     Linear,
@@ -8,7 +8,7 @@ pub enum AsyncSincInterpolation {
     Cubic,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 pub enum AsyncSincProfile {
     VeryFast,
     Fast,
@@ -16,7 +16,7 @@ pub enum AsyncSincProfile {
     Accurate,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub enum AsyncSincWindow {
     Hann,
@@ -27,7 +27,7 @@ pub enum AsyncSincWindow {
     BlackmanHarris2,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(untagged)]
 #[serde(deny_unknown_fields)]
 pub enum AsyncSincParameters {
@@ -43,7 +43,7 @@ pub enum AsyncSincParameters {
     },
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 pub enum AsyncPolyInterpolation {
     Linear,
     Cubic,
@@ -51,7 +51,7 @@ pub enum AsyncPolyInterpolation {
     Septic,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum Resampler {

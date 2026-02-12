@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub enum SampleFormat {
     S16LE,
@@ -13,7 +13,7 @@ pub enum SampleFormat {
 }
 
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub enum FileFormat {
     TEXT,
@@ -25,7 +25,7 @@ pub enum FileFormat {
     FLOAT64LE,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 pub enum GainScale {
     #[serde(rename = "linear")]
     Linear,
@@ -33,7 +33,7 @@ pub enum GainScale {
     Decibel,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub enum TimeUnit {
     #[serde(rename = "ms")]
@@ -44,7 +44,7 @@ pub enum TimeUnit {
     Samples,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(tag = "type")]
 pub enum Signal {
@@ -53,7 +53,7 @@ pub enum Signal {
     WhiteNoise { level: f64 },
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 pub enum VolumeFader {
     Aux1 = 1,
     Aux2 = 2,
@@ -61,7 +61,7 @@ pub enum VolumeFader {
     Aux4 = 4,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 pub enum LoudnessFader {
     Main = 0,
     Aux1 = 1,

@@ -2,14 +2,14 @@ use serde::{Deserialize, Serialize};
 
 use super::common::GainScale;
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct MixerChannels {
     pub r#in: usize,
     pub out: usize,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct MixerSource {
     pub channel: usize,
@@ -23,7 +23,7 @@ pub struct MixerSource {
     pub scale: Option<GainScale>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct MixerMapping {
     pub dest: usize,
@@ -32,7 +32,7 @@ pub struct MixerMapping {
     pub mute: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Mixer {
     #[serde(default)]

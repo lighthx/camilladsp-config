@@ -5,7 +5,7 @@ use super::resampler::Resampler;
 
 // --- Capture device sub-structs ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceRawFile {
     pub channels: usize,
@@ -21,7 +21,7 @@ pub struct CaptureDeviceRawFile {
     pub labels: Option<Vec<Option<String>>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceWavFile {
     pub filename: String,
@@ -31,7 +31,7 @@ pub struct CaptureDeviceWavFile {
     pub labels: Option<Vec<Option<String>>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceStdin {
     pub channels: usize,
@@ -46,7 +46,7 @@ pub struct CaptureDeviceStdin {
     pub labels: Option<Vec<Option<String>>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceBluez {
     #[serde(default)]
@@ -58,7 +58,7 @@ pub struct CaptureDeviceBluez {
     pub labels: Option<Vec<Option<String>>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceWasapi {
     pub channels: usize,
@@ -72,7 +72,7 @@ pub struct CaptureDeviceWasapi {
     pub labels: Option<Vec<Option<String>>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceCA {
     pub channels: usize,
@@ -85,7 +85,7 @@ pub struct CaptureDeviceCA {
 
 // --- CaptureDevice enum ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(tag = "type")]
 pub enum CaptureDevice {
@@ -139,7 +139,7 @@ pub enum CaptureDevice {
 
 // --- Playback device sub-structs ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PlaybackDeviceWasapi {
     pub channels: usize,
@@ -149,7 +149,7 @@ pub struct PlaybackDeviceWasapi {
     pub exclusive: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PlaybackDeviceCA {
     pub channels: usize,
@@ -162,7 +162,7 @@ pub struct PlaybackDeviceCA {
 
 // --- PlaybackDevice enum ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 #[serde(tag = "type")]
 pub enum PlaybackDevice {
@@ -207,7 +207,7 @@ pub enum PlaybackDevice {
 
 // --- Devices struct ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Devices {
     pub samplerate: usize,

@@ -7,7 +7,7 @@ use super::mixer::Mixer;
 use super::pipeline::PipelineStep;
 use super::processor::Processor;
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Configuration {
     #[serde(default)]

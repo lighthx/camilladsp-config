@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PipelineStepMixer {
     pub name: String,
@@ -10,7 +10,7 @@ pub struct PipelineStepMixer {
     pub bypassed: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PipelineStepFilter {
     #[serde(default)]
@@ -22,7 +22,7 @@ pub struct PipelineStepFilter {
     pub bypassed: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PipelineStepProcessor {
     pub name: String,
@@ -32,7 +32,7 @@ pub struct PipelineStepProcessor {
     pub bypassed: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum PipelineStep {

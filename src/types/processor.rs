@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CompressorParameters {
     pub channels: usize,
@@ -20,7 +20,7 @@ pub struct CompressorParameters {
     pub clip_limit: Option<f64>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct NoiseGateParameters {
     pub channels: usize,
@@ -34,7 +34,7 @@ pub struct NoiseGateParameters {
     pub attenuation: f64,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum Processor {

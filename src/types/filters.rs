@@ -4,7 +4,7 @@ use super::common::{FileFormat, GainScale, LoudnessFader, TimeUnit, VolumeFader}
 
 // --- Convolution parameters ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ConvParametersRaw {
     pub filename: String,
@@ -16,7 +16,7 @@ pub struct ConvParametersRaw {
     pub read_bytes_lines: Option<usize>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ConvParametersWav {
     pub filename: String,
@@ -24,7 +24,7 @@ pub struct ConvParametersWav {
     pub channel: Option<usize>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum ConvParameters {
@@ -36,28 +36,28 @@ pub enum ConvParameters {
 
 // --- Biquad parameter helper types ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(untagged)]
 pub enum ShelfSteepness {
     Q { freq: f64, q: f64, gain: f64 },
     Slope { freq: f64, slope: f64, gain: f64 },
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(untagged)]
 pub enum PeakingWidth {
     Q { freq: f64, q: f64, gain: f64 },
     Bandwidth { freq: f64, bandwidth: f64, gain: f64 },
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(untagged)]
 pub enum NotchWidth {
     Q { freq: f64, q: f64 },
     Bandwidth { freq: f64, bandwidth: f64 },
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct GeneralNotchParams {
     pub freq_p: f64,
@@ -70,7 +70,7 @@ pub struct GeneralNotchParams {
 // --- Biquad parameters ---
 
 #[allow(clippy::upper_case_acronyms)]
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum BiquadParameters {
@@ -123,7 +123,7 @@ pub enum BiquadParameters {
 
 // --- BiquadCombo parameters ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct GraphicEqualizerParameters {
     #[serde(default)]
@@ -133,7 +133,7 @@ pub struct GraphicEqualizerParameters {
     pub gains: Vec<f32>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum BiquadComboParameters {
@@ -164,7 +164,7 @@ pub enum BiquadComboParameters {
 
 // --- Other filter parameter types ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct GainParameters {
     pub gain: f64,
@@ -176,7 +176,7 @@ pub struct GainParameters {
     pub scale: Option<GainScale>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct VolumeParameters {
     #[serde(default)]
@@ -185,7 +185,7 @@ pub struct VolumeParameters {
     pub limit: Option<f32>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct LoudnessParameters {
     pub reference_level: f32,
@@ -199,7 +199,7 @@ pub struct LoudnessParameters {
     pub attenuate_mid: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct DelayParameters {
     pub delay: f64,
@@ -209,7 +209,7 @@ pub struct DelayParameters {
     pub subsample: Option<bool>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum DitherParameters {
@@ -237,7 +237,7 @@ pub enum DitherParameters {
     ShibataLow192 { bits: usize },
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct DiffEqParameters {
     #[serde(default)]
@@ -246,7 +246,7 @@ pub struct DiffEqParameters {
     pub b: Option<Vec<f64>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct LimiterParameters {
     #[serde(default)]
@@ -257,7 +257,7 @@ pub struct LimiterParameters {
 
 // --- Top-level Filter enum ---
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum Filter {
