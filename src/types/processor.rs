@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use super::common::TimeUnit;
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CompressorParameters {
@@ -35,6 +37,20 @@ pub struct NoiseGateParameters {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
+#[serde(deny_unknown_fields)]
+pub struct RACEParameters {
+    pub channels: usize,
+    pub channel_a: usize,
+    pub channel_b: usize,
+    pub delay: f64,
+    #[serde(default)]
+    pub subsample_delay: Option<bool>,
+    #[serde(default)]
+    pub delay_unit: Option<TimeUnit>,
+    pub attenuation: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum Processor {
@@ -47,5 +63,10 @@ pub enum Processor {
         #[serde(default)]
         description: Option<String>,
         parameters: NoiseGateParameters,
+    },
+    RACE {
+        #[serde(default)]
+        description: Option<String>,
+        parameters: RACEParameters,
     },
 }

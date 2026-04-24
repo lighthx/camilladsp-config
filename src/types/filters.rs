@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::common::{FileFormat, GainScale, LoudnessFader, TimeUnit, VolumeFader};
+use super::common::{FileSampleFormat, GainScale, LoudnessFader, TimeUnit, VolumeFader};
 
 // --- Convolution parameters ---
 
@@ -9,7 +9,7 @@ use super::common::{FileFormat, GainScale, LoudnessFader, TimeUnit, VolumeFader}
 pub struct ConvParametersRaw {
     pub filename: String,
     #[serde(default)]
-    pub format: Option<FileFormat>,
+    pub format: Option<FileSampleFormat>,
     #[serde(default)]
     pub skip_bytes_lines: Option<usize>,
     #[serde(default)]
@@ -46,8 +46,16 @@ pub enum ShelfSteepness {
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(untagged)]
 pub enum PeakingWidth {
-    Q { freq: f64, q: f64, gain: f64 },
-    Bandwidth { freq: f64, bandwidth: f64, gain: f64 },
+    Q {
+        freq: f64,
+        q: f64,
+        gain: f64,
+    },
+    Bandwidth {
+        freq: f64,
+        bandwidth: f64,
+        gain: f64,
+    },
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
@@ -137,11 +145,25 @@ pub struct GraphicEqualizerParameters {
 #[serde(tag = "type")]
 #[serde(deny_unknown_fields)]
 pub enum BiquadComboParameters {
-    LinkwitzRileyHighpass { freq: f64, order: usize },
-    LinkwitzRileyLowpass { freq: f64, order: usize },
-    ButterworthHighpass { freq: f64, order: usize },
-    ButterworthLowpass { freq: f64, order: usize },
-    Tilt { gain: f64 },
+    LinkwitzRileyHighpass {
+        freq: f64,
+        order: usize,
+    },
+    LinkwitzRileyLowpass {
+        freq: f64,
+        order: usize,
+    },
+    ButterworthHighpass {
+        freq: f64,
+        order: usize,
+    },
+    ButterworthLowpass {
+        freq: f64,
+        order: usize,
+    },
+    Tilt {
+        gain: f64,
+    },
     FivePointPeq {
         fls: f64,
         qls: f64,

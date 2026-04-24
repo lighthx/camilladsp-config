@@ -36,12 +36,12 @@ devices:
     type: Alsa
     channels: 2
     device: "hw:Loopback,0,1"
-    format: S16LE
+    format: S16_LE
   playback:
     type: Alsa
     channels: 2
     device: "hw:Loopback,0,5"
-    format: S32LE
+    format: S32_LE
 
 filters:
   lowpass_fir:
@@ -81,7 +81,8 @@ pipeline:
     names:
       - lowpass_fir
 "#;
-        let config = Configuration::from_yaml_string(yaml).expect("Failed to parse simpleconfig.yml");
+        let config =
+            Configuration::from_yaml_string(yaml).expect("Failed to parse simpleconfig.yml");
 
         assert_eq!(config.devices.samplerate, 44100);
         assert_eq!(config.devices.chunksize, 1024);
@@ -90,20 +91,30 @@ pipeline:
 
         // Verify capture device
         match &config.devices.capture {
-            CaptureDevice::Alsa { channels, device, format, .. } => {
+            CaptureDevice::Alsa {
+                channels,
+                device,
+                format,
+                ..
+            } => {
                 assert_eq!(*channels, 2);
                 assert_eq!(device, "hw:Loopback,0,1");
-                assert_eq!(*format, Some(SampleFormat::S16LE));
+                assert_eq!(*format, Some(AlsaSampleFormat::S16_LE));
             }
             _ => panic!("Expected Alsa capture device"),
         }
 
         // Verify playback device
         match &config.devices.playback {
-            PlaybackDevice::Alsa { channels, device, format, .. } => {
+            PlaybackDevice::Alsa {
+                channels,
+                device,
+                format,
+                ..
+            } => {
                 assert_eq!(*channels, 2);
                 assert_eq!(device, "hw:Loopback,0,5");
-                assert_eq!(*format, Some(SampleFormat::S32LE));
+                assert_eq!(*format, Some(AlsaSampleFormat::S32_LE));
             }
             _ => panic!("Expected Alsa playback device"),
         }
@@ -193,5 +204,85 @@ pipeline:
         // Verify it round-trips
         let config2 = Configuration::from_yaml_string(&yaml).expect("Failed to re-parse");
         assert_eq!(config, config2);
+    }
+
+    #[test]
+    fn test_parse_v4_devices_and_race_processor() {
+        let yaml = r#"---
+devices:
+  samplerate: 48000
+  chunksize: 256
+  capture:
+    type: PipeWire
+    channels: 2
+    node_name: capture
+    autoconnect_to: output
+  playback:
+    type: Pulse
+    channels: 2
+    device: default
+
+filters:
+  delay:
+    type: Delay
+    parameters:
+      delay: 250
+      unit: us
+
+processors:
+  race:
+    type: RACE
+    parameters:
+      channels: 2
+      channel_a: 0
+      channel_b: 1
+      delay: 100
+      delay_unit: us
+      attenuation: 6
+
+pipeline:
+  - type: Processor
+    name: race
+"#;
+
+        let config = Configuration::from_yaml_string(yaml).expect("Failed to parse v4 config");
+
+        match &config.devices.capture {
+            CaptureDevice::PipeWire {
+                channels,
+                node_name,
+                autoconnect_to,
+                ..
+            } => {
+                assert_eq!(*channels, 2);
+                assert_eq!(node_name.as_deref(), Some("capture"));
+                assert_eq!(autoconnect_to.as_deref(), Some("output"));
+            }
+            _ => panic!("Expected PipeWire capture device"),
+        }
+
+        match &config.devices.playback {
+            PlaybackDevice::Pulse { channels, device } => {
+                assert_eq!(*channels, 2);
+                assert_eq!(device, "default");
+            }
+            _ => panic!("Expected Pulse playback device"),
+        }
+
+        let filters = config.filters.as_ref().expect("Expected filters");
+        match filters.get("delay").expect("Expected delay filter") {
+            Filter::Delay { parameters, .. } => {
+                assert_eq!(parameters.unit, Some(TimeUnit::Microseconds));
+            }
+            _ => panic!("Expected delay filter"),
+        }
+
+        let processors = config.processors.as_ref().expect("Expected processors");
+        match processors.get("race").expect("Expected RACE processor") {
+            Processor::RACE { parameters, .. } => {
+                assert_eq!(parameters.delay_unit, Some(TimeUnit::Microseconds));
+            }
+            _ => panic!("Expected RACE processor"),
+        }
     }
 }

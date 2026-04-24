@@ -1,16 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-use super::common::{SampleFormat, Signal};
+use super::common::{
+    AlsaSampleFormat, AsioSampleFormat, BinarySampleFormat, CoreAudioSampleFormat, Signal,
+    WasapiSampleFormat,
+};
 use super::resampler::Resampler;
-
-// --- Capture device sub-structs ---
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceRawFile {
     pub channels: usize,
     pub filename: String,
-    pub format: SampleFormat,
+    pub format: BinarySampleFormat,
     #[serde(default)]
     pub extra_samples: Option<usize>,
     #[serde(default)]
@@ -35,7 +36,7 @@ pub struct CaptureDeviceWavFile {
 #[serde(deny_unknown_fields)]
 pub struct CaptureDeviceStdin {
     pub channels: usize,
-    pub format: SampleFormat,
+    pub format: BinarySampleFormat,
     #[serde(default)]
     pub extra_samples: Option<usize>,
     #[serde(default)]
@@ -52,7 +53,7 @@ pub struct CaptureDeviceBluez {
     #[serde(default)]
     pub service: Option<String>,
     pub dbus_path: String,
-    pub format: SampleFormat,
+    pub format: BinarySampleFormat,
     pub channels: usize,
     #[serde(default)]
     pub labels: Option<Vec<Option<String>>>,
@@ -63,11 +64,25 @@ pub struct CaptureDeviceBluez {
 pub struct CaptureDeviceWasapi {
     pub channels: usize,
     pub device: Option<String>,
-    pub format: SampleFormat,
+    #[serde(default)]
+    pub format: Option<WasapiSampleFormat>,
     #[serde(default)]
     pub exclusive: Option<bool>,
     #[serde(default)]
     pub loopback: Option<bool>,
+    #[serde(default)]
+    pub polling: Option<bool>,
+    #[serde(default)]
+    pub labels: Option<Vec<Option<String>>>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
+#[serde(deny_unknown_fields)]
+pub struct CaptureDeviceAsio {
+    pub channels: usize,
+    pub device: String,
+    #[serde(default)]
+    pub format: Option<AsioSampleFormat>,
     #[serde(default)]
     pub labels: Option<Vec<Option<String>>>,
 }
@@ -78,12 +93,10 @@ pub struct CaptureDeviceCA {
     pub channels: usize,
     pub device: Option<String>,
     #[serde(default)]
-    pub format: Option<SampleFormat>,
+    pub format: Option<CoreAudioSampleFormat>,
     #[serde(default)]
     pub labels: Option<Vec<Option<String>>>,
 }
-
-// --- CaptureDevice enum ---
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
@@ -94,7 +107,7 @@ pub enum CaptureDevice {
         channels: usize,
         device: String,
         #[serde(default)]
-        format: Option<SampleFormat>,
+        format: Option<AlsaSampleFormat>,
         #[serde(default)]
         stop_on_inactive: Option<bool>,
         #[serde(default)]
@@ -110,9 +123,22 @@ pub enum CaptureDevice {
     Pulse {
         channels: usize,
         device: String,
-        format: SampleFormat,
         #[serde(default)]
         labels: Option<Vec<Option<String>>>,
+    },
+    #[serde(alias = "PIPEWIRE", alias = "pipewire")]
+    PipeWire {
+        channels: usize,
+        #[serde(default)]
+        node_name: Option<String>,
+        #[serde(default)]
+        node_description: Option<String>,
+        #[serde(default)]
+        node_group_name: Option<String>,
+        #[serde(default)]
+        labels: Option<Vec<Option<String>>>,
+        #[serde(default)]
+        autoconnect_to: Option<String>,
     },
     RawFile(CaptureDeviceRawFile),
     WavFile(CaptureDeviceWavFile),
@@ -122,6 +148,8 @@ pub enum CaptureDevice {
     CoreAudio(CaptureDeviceCA),
     #[serde(alias = "WASAPI", alias = "wasapi")]
     Wasapi(CaptureDeviceWasapi),
+    #[serde(alias = "ASIO", alias = "asio")]
+    Asio(CaptureDeviceAsio),
     #[serde(alias = "JACK", alias = "jack")]
     Jack {
         channels: usize,
@@ -137,16 +165,26 @@ pub enum CaptureDevice {
     },
 }
 
-// --- Playback device sub-structs ---
-
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct PlaybackDeviceWasapi {
     pub channels: usize,
     pub device: Option<String>,
-    pub format: SampleFormat,
+    #[serde(default)]
+    pub format: Option<WasapiSampleFormat>,
     #[serde(default)]
     pub exclusive: Option<bool>,
+    #[serde(default)]
+    pub polling: Option<bool>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
+#[serde(deny_unknown_fields)]
+pub struct PlaybackDeviceAsio {
+    pub channels: usize,
+    pub device: String,
+    #[serde(default)]
+    pub format: Option<AsioSampleFormat>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
@@ -155,12 +193,10 @@ pub struct PlaybackDeviceCA {
     pub channels: usize,
     pub device: Option<String>,
     #[serde(default)]
-    pub format: Option<SampleFormat>,
+    pub format: Option<CoreAudioSampleFormat>,
     #[serde(default)]
     pub exclusive: Option<bool>,
 }
-
-// --- PlaybackDevice enum ---
 
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
@@ -171,26 +207,34 @@ pub enum PlaybackDevice {
         channels: usize,
         device: String,
         #[serde(default)]
-        format: Option<SampleFormat>,
+        format: Option<AlsaSampleFormat>,
     },
     #[serde(alias = "PULSE", alias = "pulse")]
-    Pulse {
+    Pulse { channels: usize, device: String },
+    #[serde(alias = "PIPEWIRE", alias = "pipewire")]
+    PipeWire {
         channels: usize,
-        device: String,
-        format: SampleFormat,
+        #[serde(default)]
+        node_name: Option<String>,
+        #[serde(default)]
+        node_description: Option<String>,
+        #[serde(default)]
+        node_group_name: Option<String>,
+        #[serde(default)]
+        autoconnect_to: Option<String>,
     },
     #[serde(alias = "FILE", alias = "file")]
     File {
         channels: usize,
         filename: String,
-        format: SampleFormat,
+        format: BinarySampleFormat,
         #[serde(default)]
         wav_header: Option<bool>,
     },
     #[serde(alias = "STDOUT", alias = "stdout")]
     Stdout {
         channels: usize,
-        format: SampleFormat,
+        format: BinarySampleFormat,
         #[serde(default)]
         wav_header: Option<bool>,
     },
@@ -198,14 +242,11 @@ pub enum PlaybackDevice {
     CoreAudio(PlaybackDeviceCA),
     #[serde(alias = "WASAPI", alias = "wasapi")]
     Wasapi(PlaybackDeviceWasapi),
+    #[serde(alias = "ASIO", alias = "asio")]
+    Asio(PlaybackDeviceAsio),
     #[serde(alias = "JACK", alias = "jack")]
-    Jack {
-        channels: usize,
-        device: String,
-    },
+    Jack { channels: usize, device: String },
 }
-
-// --- Devices struct ---
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
