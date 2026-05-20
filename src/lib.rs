@@ -207,6 +207,96 @@ pipeline:
     }
 
     #[test]
+    fn test_parse_inline_conv_values() {
+        let yaml = r#"---
+devices:
+  samplerate: 48000
+  chunksize: 1024
+  capture:
+    type: Stdin
+    channels: 2
+    format: S16_LE
+  playback:
+    type: Stdout
+    channels: 2
+    format: S16_LE
+
+filters:
+  lowpass_fir:
+    type: Conv
+    parameters:
+      type: Values
+      values: [0.0, 0.1, 0.2, 0.3]
+"#;
+
+        let config =
+            Configuration::from_yaml_string(yaml).expect("Failed to parse inline FIR values");
+        let filters = config.filters.as_ref().expect("Expected filters");
+
+        match filters
+            .get("lowpass_fir")
+            .expect("Expected lowpass_fir filter")
+        {
+            Filter::Conv { parameters, .. } => {
+                assert_eq!(
+                    *parameters,
+                    ConvParameters::Values {
+                        values: vec![0.0, 0.1, 0.2, 0.3],
+                    }
+                );
+            }
+            _ => panic!("Expected Conv filter"),
+        }
+    }
+
+    #[test]
+    fn test_parse_inline_conv_fir_alias() {
+        let yaml = r#"---
+devices:
+  samplerate: 48000
+  chunksize: 1024
+  capture:
+    type: Stdin
+    channels: 2
+    format: S16_LE
+  playback:
+    type: Stdout
+    channels: 2
+    format: S16_LE
+
+filters:
+  lowpass_fir:
+    type: Conv
+    parameters:
+      type: Values
+      fir: [0.0, 0.1, 0.2, 0.3]
+"#;
+
+        let config =
+            Configuration::from_yaml_string(yaml).expect("Failed to parse inline FIR alias");
+        let filters = config.filters.as_ref().expect("Expected filters");
+
+        match filters
+            .get("lowpass_fir")
+            .expect("Expected lowpass_fir filter")
+        {
+            Filter::Conv { parameters, .. } => {
+                assert_eq!(
+                    *parameters,
+                    ConvParameters::Values {
+                        values: vec![0.0, 0.1, 0.2, 0.3],
+                    }
+                );
+            }
+            _ => panic!("Expected Conv filter"),
+        }
+
+        let yaml_out = config.to_yaml_string().expect("Failed to serialize");
+        assert!(yaml_out.contains("values:"));
+        assert!(!yaml_out.contains("\n      fir:"));
+    }
+
+    #[test]
     fn test_parse_v4_devices_and_race_processor() {
         let yaml = r#"---
 devices:

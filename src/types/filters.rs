@@ -30,8 +30,13 @@ pub struct ConvParametersWav {
 pub enum ConvParameters {
     Raw(ConvParametersRaw),
     Wav(ConvParametersWav),
-    Values { values: Vec<f64> },
-    Dummy { length: usize },
+    Values {
+        #[serde(alias = "fir")]
+        values: Vec<f64>,
+    },
+    Dummy {
+        length: usize,
+    },
 }
 
 // --- Biquad parameter helper types ---
